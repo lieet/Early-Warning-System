@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        {% block head %}
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        {% block styles %}
+            <!-- Bootstrap CSS -->
+            {{ bootstrap.load_css() }}
+        {% endblock %}
+
+        <title>{{ title }}</title>
+        {% endblock %}
+    </head>
+    <body style="background-color: #f5f5f5; padding-top: 20px;">
+        {% block content %}
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>{{ user.name }} ({{ user.login }}) - Turma: {{ course.name }}</h3>
+                    <p class="lead">
+                        {% if user.type == 'student' %}
+                        Caro discente, os cartões a seguir informam suas notas semanais e indicam, a partir das notas, se as chances de aprovação são boas.
+                        {% else %}
+                        Caro professor(a), a lista seguinte informa a situação de cada aluno em cada semana de aula. O verde indica que o discente está indo bem, já o vermelho indica que o discente precisa melhorar.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% if user.type == 'student' %}
+            <div class="row">
+                <div class="card-group">
+                    {% for grade in grades %}
+                    <div class="col-sm-3">
+                        {% if grade.warning_level == True %}
+                        <div class="card border-success mb-3">
+                        {% else %}
+                        <div class="card border-danger mb-3">
+                        {% endif %}
+                            {% if grade.warning_level == True %}
+                            <div class="card-body text-success">
+                            {% else %}
+                            <div class="card-body text-danger">
+                            {% endif %}
+                                <h5 class="card-title">Semana {{ grade.week }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {% if grade.warning_level == True %}
+                                    As notas indicam boas chances de aprovação.
+                                    {% else %}
+                                    É preciso melhorar as notas para aumentar as chances de aprovação.
+                                    {% endif %}
+                                </h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                        <th colspan="2">Notas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>Participação presencial</td>
+                                        <td>{{ grade.pp }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Participação virtual</td>
+                                        <td>{{ grade.pv }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <caption>Lista de notas da turma</caption>
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th rowspan="2">#</th>
+                                    <th rowspan="2">Aluno</th>
+                                    <th colspan="{{ weeks }}">Semana</th>
+                                </tr>
+                                <tr>
+                                    {% for n in range(1, weeks+1) %}
+                                    <th>{{ n }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ grade.name }}</td>
+                                    {% for class_grade in grade.grades %}
+                                        <td>{% if class_grade.warning_level == True %}
+                                            <span style="height: 15px; width: 15px; background-color: #0f0; border-radius: 50%; display: inline-block;"></span>
+                                            {% else %}
+                                            <span style="height: 15px; width: 15px; background-color: #f00; border-radius: 50%; display: inline-block;"></span>
+                                            {% endif %}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endblock %}
+        <footer class="my-5 pt-5 text-muted text-center text-small">
+            <p class="mb-1">© 2021 App Prototype</p>
+        </footer>
+    </body>
+</html>

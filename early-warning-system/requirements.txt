@@ -1,0 +1,4 @@
+Flask==2.0.1
+requests==2.26.0
+Bootstrap-Flask==1.7.0
+joblib==1.0.1
